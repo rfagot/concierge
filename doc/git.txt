@@ -1,0 +1,37 @@
+git, github, bitbucket, w3layouts
+
+GIT (master) :
+  se mettre dans le directory
+  faire git bash via le click droit dans le directory
+  git init (pour créer le .git)
+  echo "# My first projet" >>README.md >>LICENSE.md
+  .gitignore : les fichiers qu'on veut pas sur le serveur
+  git add --all
+  git status
+  git commit -m "First Commit"
+  
+  ENVOYER SUR LE SERVEUR GIT HUB : (2 comptes créés rfagot avec atuana & rossinante avec orange)
+  git remote add origin https://github.com/rfagot/atuana
+  git push -u origin master			(--force)
+  
+  si modif : git add [fichier]
+  
+  git clone https://github.com/rfagot/atuana (se mettre dans le git Rossinante)
+  cd atuana
+  git pull origin master
+  git checkout -b 'mybranch'		: (master devient mybranc)	A ce stade mybranch est inconnu du Project Owner
+  touch README1.md
+  git status
+  git add README1.md
+  git commit -m "New readme file"
+  git push -u origin mybranch
+  sous Rossinante : Cliquer le bouton Compare & Pull request ET la suite
+  
+ 
+ sous Git Bash (mybranch) :
+ 
+   git checkout master : retour sur master
+   git pull
+   git branch --merged
+   git branch -d mybranch		: supprime la branche
+ 
