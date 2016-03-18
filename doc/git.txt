@@ -1,3 +1,4 @@
+
 git, github, bitbucket, w3layouts
 
 GIT (master) :
@@ -11,27 +12,42 @@ GIT (master) :
   git commit -m "First Commit"
   
   ENVOYER SUR LE SERVEUR GIT HUB : (2 comptes créés rfagot avec atuana & rossinante avec orange)
-  git remote add origin https://github.com/rfagot/atuana
+  git remote add origin https://github.com/rfagot/concierge
   git push -u origin master			(--force)
   
   si modif : git add [fichier]
   
-  git clone https://github.com/rfagot/atuana (se mettre dans le git Rossinante)
+  git clone https://github.com/rfagot/concierge (se mettre dans le git Rossinante)
   cd atuana
   git pull origin master
-  git checkout -b 'mybranch'		: (master devient mybranc)	A ce stade mybranch est inconnu du Project Owner
+  git checkout -b 'bRossinante'		: (master devient bRossinante)	A ce stade bRossinante est inconnu du Project Owner
   touch README1.md
   git status
   git add README1.md
   git commit -m "New readme file"
-  git push -u origin mybranch
+  git push -u origin bRossinante
   sous Rossinante : Cliquer le bouton Compare & Pull request ET la suite
   
  
- sous Git Bash (mybranch) :
+ sous Git Bash (bRossinante) :
  
    git checkout master : retour sur master
    git pull
    git branch --merged
-   git branch -d mybranch		: supprime la branche
  
+GIT (fin du projet) : 
+   git branch -d bRossinante		: supprime la branche
+ 
+ 
+ [16/03/2016 11:54:06] Antoine BLR: Je viens de terminer ce premier Tuto: Génial !
+Il faut juste des connecter au site via un compte gratuit mais ça vaut VRAIMENT le coup !
+http://fr.tuto.com/compte/achats/video/49868/player/#premiers-pas-avec-angularjs
+[16/03/2016 11:54:28] Antoine BLR: 50 minutes pour apprendre clairement à faire une app webmail
+
+
+ 
+  
+  
+  
+  
+  
