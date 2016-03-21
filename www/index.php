@@ -1,40 +1,58 @@
 <?php
-// on teste si le visiteur a soumis le formulaire de connexion
-if (isset($_POST['connexion']) && $_POST['connexion'] == 'Connexion') {
-	if ((isset($_POST['login']) && !empty($_POST['login'])) && (isset($_POST['pass']) && !empty($_POST['pass']))) {
-
-	$base = mysql_connect ('serveur', 'login', 'password');
-	mysql_select_db ('nom_base', $base);
-
-	// on teste si une entrée de la base contient ce couple login / pass
-	$sql = 'SELECT count(*) FROM membre WHERE login="'.mysql_escape_string($_POST['login']).'" AND pass_md5="'.mysql_escape_string(md5($_POST['pass'])).'"';
-	$req = mysql_query($sql) or die('Erreur SQL !<br />'.$sql.'<br />'.mysql_error());
-	$data = mysql_fetch_array($req);
-
-	mysql_free_result($req);
-	mysql_close();
-
-	// si on obtient une réponse, alors l'utilisateur est un membre
-	if ($data[0] == 1) {
-		session_start();
-		$_SESSION['login'] = $_POST['login'];
-		header('Location: membre.php');
-		exit();
-	}
-	// si on ne trouve aucune réponse, le visiteur s'est trompé soit dans son login, soit dans son mot de passe
-	elseif ($data[0] == 0) {
-		$erreur = 'Compte non reconnu.';
-	}
-	// sinon, alors la, il y a un gros problème :)
-	else {
-		$erreur = 'Probème dans la base de données : plusieurs membres ont les mêmes identifiants de connexion.';
-	}
-	}
-	else {
-	$erreur = 'Au moins un des champs est vide.';
-	}
+/*
+Page: connexion.php
+*/
+session_start(); // à mettre tout en haut du fichier .php, cette fonction propre à PHP servira à maintenir la $_SESSION
+if(isset($_POST['connexion'])) { // si le bouton "Connexion" est appuyé
+    // on vérifie que le champ "login" n'est pas vide
+    // empty vérifie à la fois si le champ est vide et si le champ existe belle et bien (is set)
+    if(empty($_POST['login'])) {
+        echo "Le champ login est vide.";
+    } else {
+        // on vérifie maintenant si le champ "Mot de passe" n'est pas vide"
+        if(empty($_POST['password'])) {
+            echo "Le champ Mot de passe est vide.";
+        } else {
+            // les champs sont bien posté et pas vide, on sécurise les données entrées par le membre:
+            $login = htmlentities($_POST['login'], ENT_QUOTES, "ISO-8859-1"); // le htmlentities() passera les guillemets en entités HTML, ce qui empêchera les injections SQL
+            $MotDePasse = htmlentities($_POST['password'], ENT_QUOTES, "ISO-8859-1");
+            //on se connecte à la base de données:
+            $mysqli = mysqli_connect("localhost", "root", "", "concierge");
+            //on vérifie que la connexion s'effectue correctement:
+            if(!$mysqli){
+                echo "Erreur de connexion à la base de données.";
+            } else {
+                // on fait maintenant la requête dans la base de données pour rechercher si ces données existe et correspondent:
+                $Requete = mysqli_query($mysqli,"SELECT * FROM host WHERE hostid = '".$login."' AND password = '".$MotDePasse."'");
+                // si il y a un résultat, mysqli_num_rows() nous donnera alors 1
+                // si mysqli_num_rows() retourne 0 c'est qu'il a trouvé aucun résultat
+                if(mysqli_num_rows($Requete) == 0) {
+                    echo "Le login ou le mot de passe est incorrect, le compte n'a pas été trouvé.";
+                } else {
+                    // on ouvre la session avec $_SESSION:
+                    $_SESSION['login'] = $login; // la session peut être appelée différemment et son contenu aussi peut être autre chose que le login
+                    echo "Bonjour " . $login . " Vous êtes à présent connecté !";
+					
+					/**
+					$dochtml = new DOMDocument();
+					$dochtml->loadHTML("index.php");
+					$bonjour = $dochtml->getElementsByTagName('bonjour');
+					$bonjour.value->"TOTO LE HEROS";
+					**/
+					?>
+					<script type="text/javascript>
+					  alert('coucou');
+					  document.getElementById('bonjour').innerText = "bonjour Robert";
+					</script>
+					<?php
+                }
+				
+            }
+        }
+    }
 }
 ?>
+
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -79,9 +97,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<!--/.navbar-header-->
 						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 							<ul class="nav navbar-nav">
-								<li class="active"><a href="index.html">Home</a></li>
+								<li class="active"><a href="index.php">Home</a></li>
 								<li><a>Devenir un Hôte </a></li>
 								<li><a href="contact.html">Contact</a></li>
+								<li name="bonjour" id="bonjour">Login</li>
 								<li><button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-user"></span></button></li>
 							</ul>
 						</div>
@@ -99,14 +118,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	             <div class="modal-body" style="padding:40px 50px;">
 	               <form role="form" method="post" action="index.php">
 									 Login : <input type="text" name="login" value="<?php if (isset($_POST['login'])) echo htmlentities(trim($_POST['login'])); ?>"><br />
-									 Mot de passe : <input type="password" name="pass" value="<?php if (isset($_POST['pass'])) echo htmlentities(trim($_POST['pass'])); ?>"><br />
+									 Mot de passe : <input type="password" name="password" value="<?php if (isset($_POST['password'])) echo htmlentities(trim($_POST['password'])); ?>"><br />
 									 <!-- <input type="submit" name="connexion" value="Connexion"> -->
-	                   <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off">connexion</span></button>
+	                   <button type="submit" name="connexion" value="Connexion" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off">connexion</span></button>
 	               </form>
 	             </div>
 	             <div class="modal-footer">
 	               <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-	               <p>Not a member? <a href="sign.php">Sign Up</a>
+	               <p>Not a member? <a href="admin/sign.php">Sign Up</a>
 									 <?php
 										 if (isset($erreur)) echo '<br /><br />',$erreur;
 									 ?>
@@ -226,10 +245,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<div class="container">
 			<div class="col-md-2 deco">
 				<h4>Navigation</h4>
-				<li><a href="index.html">Home</a></li>
-				<li><a href="shortcodes.html">Short Codes </a></li>
-				<li><a href="sigin.html">Sign in</a></li>
-				<li><a href="contact.html">Contact</a></li>
+				<li><a href="admin/index.php">Home</a></li>
+				<li><a href="admin/shortcodes.html">Short Codes </a></li>
+				<li><a href="admin/sigin.html">Sign in</a></li>
+				<li><a href="admin/contact.html">Contact</a></li>
 			</div>
 			<div class="col-md-2 deco">
 				<h4>Links</h4>
